@@ -1,6 +1,7 @@
 var BOWER_DIR = 'bower_components';
 
 require.config({
+  baseUrl: REQUIREJS_BASE_URL,
   paths: {
     text: BOWER_DIR + '/requirejs-text/text',
     jquery: BOWER_DIR + '/jquery/jquery',
@@ -11,7 +12,8 @@ require.config({
   },
 
   packages: [
-    {name: 'deck', location: BOWER_DIR + '/musikata.deck/src'}
+    {name: 'deck', location: BOWER_DIR + '/musikata.deck/src'},
+    {name: 'testApp', location: 'src'}
   ],
 
   shim: {
