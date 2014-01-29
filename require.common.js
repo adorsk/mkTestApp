@@ -13,6 +13,7 @@ require.config({
 
   packages: [
     {name: 'deck', location: BOWER_DIR + '/musikata.deck/src'},
+    {name: 'feelTheBeat', location: BOWER_DIR + '/musikata.feelTheBeat/src'},
     {name: 'testApp', location: 'src'}
   ],
 

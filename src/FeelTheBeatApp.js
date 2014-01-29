@@ -13,33 +13,11 @@ define(function(require){
   var MusikataExerciseRunnerModel = require('deck/MusikataExerciseRunnerModel');
   var MusikataExerciseRunnerView = require('deck/MusikataExerciseRunnerView');
 
+  var FeelTheBeatExerciseView = require('feelTheBeat/FeelTheBeatExerciseView');
 
   var TestAppTemplate = require('text!./templates/TestApp.html');
 
-  var SillyExerciseView = Marionette.ItemView.extend({
-    template: Handlebars.compile(
-      '<button id="pass" value="pass">PASS</button><button id="fail" value="fail">FAIL</button>'
-    ),
-    events: {
-      'click button': 'onButtonClick'
-    },
-    onRender: function(){
-      console.log('yo', this.el);
-      this.trigger('ready');
-    },
-    onButtonClick: function(e){
-      var passFail = $(e.target).attr("id");
-      this.model.set('submission', passFail);
-      this.model.set('submissionStatus', 'submitting');
-      var _m = this.model;
-      setTimeout(function(){
-        _m.set('submissionStatus', 'completed');
-        _m.set('result', passFail);
-      }, 500);
-    }
-  });
-
-  var TestApp = Marionette.Layout.extend({
+  var FeelTheBeatApp = Marionette.Layout.extend({
     template: Handlebars.compile(TestAppTemplate),
     regions: {
       runnerRegion: '.runner_container'
@@ -50,6 +28,30 @@ define(function(require){
       var appConfig = options.appConfig;
 
       /*
+       * Setup audioContext and sound manager.
+       */
+      var AudioContext = window.AudioContext || window.webkitAudioContext;
+      var audioContext = new AudioContext();
+      this.audioContext = audioContext;
+      var SoundManager = function(){
+        this.context = audioContext;
+      };
+      _.extend(SoundManager.prototype, {
+        getBufferPromise: function(key){
+          // Fake loading by creating noise buffer.
+          var buffer = this.context.createBuffer(1, 44100, 44100);
+          var data = buffer.getChannelData(0);
+          for (i = 0; i < data.length; i++) {
+            data[i] = 0;
+          }
+          var deferred = new $.Deferred();
+          deferred.resolve(buffer);
+          return deferred.promise();
+        }
+      });
+      this.soundManager = new SoundManager();
+
+      /*
        * Setup factories.
        */
 
@@ -57,24 +59,27 @@ define(function(require){
       this.modelFactory = new ModelFactory();
       this.modelFactory.addHandler('html', Backbone.Model);
       this.modelFactory.addHandler('composite', CompositeModel);
-      this.modelFactory.addHandler('sillyExercise', Backbone.Model);
+      this.modelFactory.addHandler('feelTheBeat', Backbone.Model);
 
       // View factory.
       this.viewFactory = new ViewFactory();
       this.viewFactory.addHandler('html', function(options){
         return new HtmlView(options);
       });
-
       this.viewFactory.addHandler('composite', _.bind(function(options){
-        var mergedOptions = _.extend({
-          viewFactory: this.viewFactory
-        }, options);
-        return new CompositeView(mergedOptions);
+        return new CompositeView(
+          _.extend({viewFactory: this.viewFactory}, options));
       }, this));
-
-      this.viewFactory.addHandler('sillyExercise', function(options){
-        return new SillyExerciseView(options);
-      });
+      this.viewFactory.addHandler('feelTheBeat', _.bind(function(options){
+        var mergedOptions = _.extend({
+          audioContext: this.audioContext,
+          soundManager: this.soundManager,
+          requestAnimationFrame: function(callback){
+           return  window.requestAnimationFrame(callback);
+          }
+        }, options);
+        return new FeelTheBeatExerciseView(mergedOptions);
+      }, this));
 
       /* 
        * Setup models.
@@ -111,5 +116,5 @@ define(function(require){
     }
   });
 
-  return TestApp;
+  return FeelTheBeatApp;
 });

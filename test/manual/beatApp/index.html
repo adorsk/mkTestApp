@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+
+<head>
+<head>
+
+<body>
+    <div id="app_container"></div>
+
+    <script>
+        appConfig = {
+          introSlides: [
+            {type: 'html', html: 'This is the intro!'}
+          ],
+          exerciseSlides: [
+            {type: 'feelTheBeat', submissionType: 'automatic', bpm: 90, length: 4},
+            {type: 'feelTheBeat', submissionType: 'automatic', bpm: 90, length: 4},
+          ],
+          destination: 'http://musikata.com'
+        };
+    </script>
+
+    <script src="../../../bower_components/requirejs/require.js"></script>
+    <script>
+        REQUIREJS_BASE_URL = '../../../';
+    </script>
+    <script src="../../../require.common.js"></script>
+    <script src="main.js"></script>
+<body>
+<html>
