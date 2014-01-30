@@ -10,10 +10,12 @@ define(function(require){
   var CompositeModel = require('deck/CompositeModel');
   var CompositeView = require('deck/CompositeView');
   var DeckModel = require('deck/DeckModel');
+  var SlideModel = require('deck/SlideModel');
+  var ExerciseSlideModel = require('deck/ExerciseSlideModel');
   var MusikataExerciseRunnerModel = require('deck/MusikataExerciseRunnerModel');
   var MusikataExerciseRunnerView = require('deck/MusikataExerciseRunnerView');
 
-  var FeelTheBeatExerciseView = require('feelTheBeat/FeelTheBeatExerciseView');
+  var FeelTheBeatExerciseSlideView = require('./FeelTheBeatExerciseSlideView');
 
   var TestAppTemplate = require('text!./templates/TestApp.html');
 
@@ -55,9 +57,9 @@ define(function(require){
 
       // Model factory.
       this.modelFactory = new ModelFactory();
-      this.modelFactory.addHandler('html', Backbone.Model);
+      this.modelFactory.addHandler('html', SlideModel);
       this.modelFactory.addHandler('composite', CompositeModel);
-      this.modelFactory.addHandler('feelTheBeat', Backbone.Model);
+      this.modelFactory.addHandler('feelTheBeat', ExerciseSlideModel);
 
       // View factory.
       this.viewFactory = new ViewFactory();
@@ -68,6 +70,7 @@ define(function(require){
         return new CompositeView(
           _.extend({viewFactory: this.viewFactory}, options));
       }, this));
+
       this.viewFactory.addHandler('feelTheBeat', _.bind(function(options){
         var mergedOptions = _.extend({
           audioManager: this.audioManager,
@@ -75,7 +78,7 @@ define(function(require){
            return  window.requestAnimationFrame(callback);
           }
         }, options);
-        return new FeelTheBeatExerciseView(mergedOptions);
+        return new FeelTheBeatExerciseSlideView(mergedOptions);
       }, this));
 
       /* 
