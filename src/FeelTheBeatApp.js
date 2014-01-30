@@ -17,6 +17,9 @@ define(function(require){
 
   var TestAppTemplate = require('text!./templates/TestApp.html');
 
+  var AudioManager = require('audioManager/AudioManager');
+  var AudioContext = require('audioManager/AudioContext');
+
   var FeelTheBeatApp = Marionette.Layout.extend({
     template: Handlebars.compile(TestAppTemplate),
     regions: {
@@ -28,28 +31,23 @@ define(function(require){
       var appConfig = options.appConfig;
 
       /*
-       * Setup audioContext and sound manager.
+       * Setup audioManager.
        */
-      var AudioContext = window.AudioContext || window.webkitAudioContext;
-      var audioContext = new AudioContext();
-      this.audioContext = audioContext;
-      var SoundManager = function(){
-        this.context = audioContext;
-      };
-      _.extend(SoundManager.prototype, {
-        getBufferPromise: function(key){
-          // Fake loading by creating noise buffer.
-          var buffer = this.context.createBuffer(1, 44100, 44100);
-          var data = buffer.getChannelData(0);
-          for (i = 0; i < data.length; i++) {
-            data[i] = 0;
-          }
-          var deferred = new $.Deferred();
-          deferred.resolve(buffer);
-          return deferred.promise();
-        }
+      this.audioManager = new AudioManager({
+        audioContext: AudioContext
       });
-      this.soundManager = new SoundManager();
+
+      // Load samples.
+      var samples = [
+        {id: 'FeelTheBeat:beat', url: require.toUrl('./samples/marimba.mp3')},
+        {id: 'FeelTheBeat:tap', url: require.toUrl('./samples/marimba.mp3')}
+      ];
+      _.each(samples, function(sample){
+        this.audioManager.loadSample(sample);
+      }, this);
+
+      // Start audio timer.
+      AudioContext.createGain();
 
       /*
        * Setup factories.
@@ -72,8 +70,7 @@ define(function(require){
       }, this));
       this.viewFactory.addHandler('feelTheBeat', _.bind(function(options){
         var mergedOptions = _.extend({
-          audioContext: this.audioContext,
-          soundManager: this.soundManager,
+          audioManager: this.audioManager,
           requestAnimationFrame: function(callback){
            return  window.requestAnimationFrame(callback);
           }

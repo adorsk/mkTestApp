@@ -14,6 +14,7 @@ require.config({
   packages: [
     {name: 'deck', location: BOWER_DIR + '/musikata.deck/src'},
     {name: 'feelTheBeat', location: BOWER_DIR + '/musikata.feelTheBeat/src'},
+    {name: 'audioManager', location: BOWER_DIR + '/musikata.audioManager/src'},
     {name: 'testApp', location: 'src'}
   ],
 
