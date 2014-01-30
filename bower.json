@@ -16,6 +16,7 @@
   "dependencies": {
     "musikata.deck": "git://github.com/musikata/musikata.deck",
     "musikata.feelTheBeat": "git://github.com/musikata/musikata.feelTheBeat",
-    "musikata.audioManager": "git://github.com/musikata/musikata.audioManager"
+    "musikata.audioManager": "git://github.com/musikata/musikata.audioManager",
+    "musikata.theme": "git://github.com/musikata/musikata.theme"
   }
 }

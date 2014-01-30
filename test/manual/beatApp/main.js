@@ -6,7 +6,7 @@ function(
   FeelTheBeatApp
 ){
   var app = new FeelTheBeatApp({
-    el: '#app_container',
+    el: '#app-container',
     appConfig: appConfig
   });
 
